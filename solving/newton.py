@@ -62,7 +62,7 @@ def newton_method(funcs, nums, variables, tolerance=0.00001, max_iter=1000):
     iters = 0
     for i in range(max_iter):
         if new_x is None:
-            return "Try another numbers"
+            return "Try another numbers", 0
         count = 0
         for q in range(len(new_x)):
             first_condition = abs(new_x[q] - nums[q]) < tolerance
@@ -76,4 +76,5 @@ def newton_method(funcs, nums, variables, tolerance=0.00001, max_iter=1000):
         iters = i
     else:
         print("Maximum number of iterations is reached!")
+        return "Maximum number of iterations is reached!", max_iter
     return new_x.tolist(), iters
