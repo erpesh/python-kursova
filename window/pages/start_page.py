@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
-from window.page_newton import PageNewton
-from window.page_secant import PageSecant
+from window.pages.page_newton import PageNewton
+from window.pages.page_secant import PageSecant
 
 
 class StartPage(tk.Frame):
@@ -26,3 +26,4 @@ class StartPage(tk.Frame):
         submit_method = ttk.Button(self, text="Submit", command=lambda: controller.show_frame(
             PageNewton if var_radio.get() == 0 else PageSecant))
         submit_method.grid(row=4, column=0, columnspan=3, padx=2, pady=5)
+

@@ -1,8 +1,8 @@
 import tkinter as tk
 
-from window.page_newton import PageNewton
-from window.page_secant import PageSecant
-from window.start_page import StartPage
+from window.pages.page_newton import PageNewton
+from window.pages.page_secant import PageSecant
+from window.pages.start_page import StartPage
 
 
 class TkinterApp(tk.Tk):
@@ -12,6 +12,7 @@ class TkinterApp(tk.Tk):
         # __init__ function for class Tk
         tk.Tk.__init__(self, *args, **kwargs)
         self.title("Equations solver")
+        # self.state('zoomed')
 
         # creating a container
         container = tk.Frame(self)

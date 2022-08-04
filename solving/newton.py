@@ -1,9 +1,9 @@
-from sympy import *
+from sympy import Symbol, log
 import numpy as np
 from math import (
-    e
+    e,
 )
-
+LOG = log
 
 def calculate_jacobian(functions, variables):
     function_list = functions.copy()
@@ -25,6 +25,7 @@ def calculate_jacobian(functions, variables):
         dif = [ev.diff(lets[j]) for j in range(len(function_list))]
         diffs.append(dif)
     jacobian = np.array(diffs)
+    print(jacobian)
     return jacobian
 
 
@@ -55,14 +56,22 @@ def calculate_new_x(function_list, jacobian, numbers, variables):
     return new_x
 
 
+def handle_functions(funcs):
+    for i in range(len(funcs)):
+        func_splited = funcs[i].split('=')
+        funcs[i] = func_splited[0] + "-" + f"({func_splited[1]})"
+    return funcs
+
+
 def newton_method(funcs, nums, variables, tolerance=0.00001, max_iter=1000):
+    funcs = handle_functions(funcs)
     jacobian = calculate_jacobian(funcs, variables)
     jacobian = np.array(jacobian)
     new_x = calculate_new_x(funcs, jacobian, nums, variables)
     iters = 0
     for i in range(max_iter):
         if new_x is None:
-            return "Try another numbers", 0
+            return "Щось пішло не так, спробуйте інші числа", 0
         count = 0
         for q in range(len(new_x)):
             first_condition = abs(new_x[q] - nums[q]) < tolerance
@@ -75,6 +84,8 @@ def newton_method(funcs, nums, variables, tolerance=0.00001, max_iter=1000):
         new_x = calculate_new_x(funcs, jacobian, nums, variables=variables)
         iters = i
     else:
-        print("Maximum number of iterations is reached!")
-        return "Maximum number of iterations is reached!", max_iter
+        print("Максимальна к-сть ітерацій досягнута!")
+        return "Максимальна к-сть ітерацій досягнута!", max_iter
     return new_x.tolist(), iters
+
+

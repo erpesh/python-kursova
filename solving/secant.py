@@ -43,7 +43,15 @@ def calculate(funcs, nums, variables):
     return nums
 
 
+def handle_functions(funcs):
+    for i in range(len(funcs)):
+        func_splited = funcs[i].split('=')
+        funcs[i] = func_splited[0] + "-" + f"({func_splited[1]})"
+    return funcs
+
+
 def secant_method(funcs, nums, variables, tolerance=0.00001, max_iter=1000):
+    funcs = handle_functions(funcs)
     iters = 0
     for i in range(max_iter):
         if nums is None:
