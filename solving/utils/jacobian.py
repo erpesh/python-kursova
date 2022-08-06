@@ -18,9 +18,11 @@ def calculate_jacobian(functions, variables):
                     j += len(f"lets[{k}]") - 1
                 j += 1
     diffs = []
+    evalled_functions = []
     for i in range(len(function_list)):
         ev = eval(function_list[i])
+        evalled_functions.append(ev)
         dif = [ev.diff(lets[j]) for j in range(len(function_list))]
         diffs.append(dif)
     jacobian = np.array(diffs)
-    return jacobian
+    return jacobian, evalled_functions

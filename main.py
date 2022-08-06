@@ -1,14 +1,17 @@
 from window.tkinter_app import start_tkinter
 from sympy import Symbol, log, Abs, lambdify
+import numpy as np
 
 
 if __name__ == '__main__':
     start_tkinter()
-    # x = Symbol("x", real=True)
-    # y = Symbol("y")
+    x = Symbol("x", real=True)
+    y = Symbol("y", real=True)
     # equation = 1
+    equation = log(x)/log(3) + log(y)/log(2) - 2 #3.37721022 -0.63651175
     # lam = lambdify([x, y], equation)
     # print(lam(1, 2))
+    print(np.isnan(np.min(lambdify([x, y], equation)(3, -3))))
 
 #ADFLJAKLSSFJASASAASFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 #ADFLJAKLSSFJASASAASFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
