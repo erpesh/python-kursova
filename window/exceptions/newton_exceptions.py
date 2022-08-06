@@ -9,7 +9,9 @@ def isfloat(num):
 
 def funcs_exc(funcs):
     if not all(funcs):
-        raise Exception("Введіть всі функції")
+        raise Exception("Введіть всі рівняння")
+    if not all(['=' in func for func in funcs]):
+        raise Exception("Рівняння повинні мати знак дорівнює")
 
 
 def initial_guesses_exc(init_nums, funcs):
