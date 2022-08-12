@@ -1,4 +1,4 @@
-from sympy import Symbol, log
+from sympy import Symbol, log, sin, cos, tan, cot, atan, acot, asin, acos, pi
 from math import e
 import numpy as np
 
@@ -6,7 +6,7 @@ import numpy as np
 def calculate_jacobian(functions, variables):
     function_list = functions.copy()
 
-    lets = [Symbol(variables[i]) for i in range(len(function_list))]
+    lets = [Symbol(variables[i], real=True) for i in range(len(function_list))]
     for i in range(len(function_list)):
         for k in range(len(function_list)):
             j = 0

@@ -1,4 +1,6 @@
 import tkinter as tk
+import traceback
+from functools import reduce
 from math import ceil, log10
 from tkinter import ttk
 
@@ -12,6 +14,7 @@ class PageSecant(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         self.number_of_inputs = 2
+        self.initial_guesses = None
         self.answer = None
 
         label = ttk.Label(self, text="Метод січних")
@@ -69,7 +72,7 @@ class PageSecant(tk.Frame):
         self.inputs[self.number_of_inputs - 1]["input"].grid(row=2 + self.number_of_inputs, column=1, columnspan=3,
                                                              padx=2, pady=5)
 
-        if self.number_of_inputs == 10:
+        if self.number_of_inputs == 5:
             self.add_function_button.grid_remove()
 
     def remove_function(self):
@@ -80,7 +83,22 @@ class PageSecant(tk.Frame):
         self.update_widgets()
 
     def initial_numbers(self):
-        self.init_nums = ttk.Entry(self, width=15)
+
+        def save_initial_guesses(initial_nums):
+            self.initial_guesses = [[initial_nums[i][j].get() for j in range(len(initial_nums[i]))] for i in range(len(initial_nums))]
+
+        def create():
+            win = tk.Toplevel(self)
+            initial_nums = [[ttk.Entry(win, width=7) for _ in range(self.number_of_inputs)] for _ in range(self.number_of_inputs + 1)]
+            for i in range(len(initial_nums)):
+                for j in range(len(initial_nums[i])):
+                    if self.initial_guesses is not None:
+                        initial_nums[i][j].insert(-1, self.initial_guesses[i][j])
+                    initial_nums[i][j].grid(row=j, column=i, padx=2, pady=5)
+            sbmt_btn = ttk.Button(win, text="Зберегти", command=lambda: save_initial_guesses(initial_nums))
+            sbmt_btn.grid(row=len(initial_nums) + 1)
+
+        self.init_nums = ttk.Button(self, text="Додати початкові", command=create)
         self.initial_nums_label = ttk.Label(self, text="Початкові наближення: ")
         self.init_nums.grid(row=self.number_of_inputs + 3, column=1, padx=2, pady=10)
         self.initial_nums_label.grid(row=self.number_of_inputs + 3, column=0, padx=2, pady=10)
@@ -129,9 +147,12 @@ class PageSecant(tk.Frame):
             tolerance = tolerance_exc(self.toler_inpt)
             # max iter handling
             max_iter = max_iter_exc(self.max_iter_entry)
-            result, iters = newton_method(funcs=funcs, nums=nums, tolerance=tolerance, variables=variables,
+            result, iters = newton_method(funcs=funcs,
+                                          nums=nums,
+                                          tolerance=tolerance,
+                                          variables=variables,
                                           max_iter=max_iter)
-            # bad initial guesses handling
+            # initial guesses handling
             if type(result) == str:
                 answer_string = result
             else:
@@ -144,7 +165,7 @@ class PageSecant(tk.Frame):
             answer_string = "Перевірте коректність введеної функції"
         except Exception as ex:
             answer_string = ex
-            # print(traceback.format_exc())
+            print(traceback.format_exc())
 
         if self.answer is not None:
             self.answer.destroy()

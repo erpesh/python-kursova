@@ -1,13 +1,9 @@
 import traceback
-
 from sympy import Symbol, lambdify
 import numpy as np
-from math import (
-    e,
-    log
-)
 
 from solving.utils.jacobian import calculate_jacobian
+from solving.utils.parse_functionss import parse_functions
 
 
 def f(funcs, num_list, variables):
@@ -38,13 +34,6 @@ def calculate_new_x(function_list, jacobian, numbers, variables):
     return new_x
 
 
-def parse_functions(funcs):
-    for i in range(len(funcs)):
-        func_splited = funcs[i].split('=')
-        funcs[i] = func_splited[0] + "-" + f"({func_splited[1]})"
-    return funcs
-
-
 def newton_method(funcs, nums, variables, tolerance=0.00001, max_iter=1000):
     funcs = parse_functions(funcs)
     jacobian, funcs = calculate_jacobian(funcs, variables)
@@ -71,5 +60,3 @@ def newton_method(funcs, nums, variables, tolerance=0.00001, max_iter=1000):
         print("Максимальна к-сть ітерацій досягнута!")
         return "Максимальна к-сть ітерацій досягнута!", max_iter
     return new_x.tolist(), iters
-
-

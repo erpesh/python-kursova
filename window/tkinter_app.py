@@ -22,7 +22,7 @@ class TkinterApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         # initializing frames to an empty array
-        self.frames = {}
+        self.frames = []
 
         # iterating through a tuple consisting
         # of the different page layouts
@@ -32,11 +32,11 @@ class TkinterApp(tk.Tk):
             # initializing frame of that object from
             # startpage, page1, page2 respectively with
             # for loop
-            self.frames[F] = frame
+            self.frames.append(frame)
 
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame(StartPage)
+        self.show_frame(0)
 
     # to display the current frame passed as
     # parameter

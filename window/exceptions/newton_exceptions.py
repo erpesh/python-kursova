@@ -29,6 +29,7 @@ def initial_guesses_exc(init_nums, funcs):
 def variables_exc(variables_entry, funcs):
     variables = variables_entry.get().split(' ')
     variables_lengths = [len(x) for x in variables]
+    used_letters= ['e', 'l', 'o', 'g', 's', 'i', 'n', 'c', 't', 'p', 'a']
     if not variables_entry.get():
         raise Exception("Ввадіть змінні")
     if sum(variables_lengths) != len(variables):
@@ -37,6 +38,10 @@ def variables_exc(variables_entry, funcs):
         raise Exception("К-сть змінних повинна дорівнювати к-сті рівнянь")
     if not all([item.isalpha() for item in variables]):
         raise Exception("Змінні повинні бути латинськими літерами")
+    for letter in used_letters:
+        if letter in variables:
+            raise Exception(f'Літера "{letter}" не може бути змінною')
+
     return variables
 
 

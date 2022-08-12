@@ -15,8 +15,11 @@ class PageNewton(tk.Frame):
         self.number_of_inputs = 2
         self.answer = None
 
+        back_btn = ttk.Button(self, text="Повернутися", command=lambda: controller.show_frame(0))
+        back_btn.grid(row=0, column=0)
+
         label = ttk.Label(self, text="Метод Ньютона")
-        label.grid(row=0, column=0, columnspan=3, padx=2, pady=10)
+        label.grid(row=0, column=1, columnspan=3, padx=2, pady=10)
 
         self.render_inputs()
         self.initial_numbers()
@@ -70,7 +73,7 @@ class PageNewton(tk.Frame):
         self.inputs[self.number_of_inputs - 1]["input"].grid(row=2 + self.number_of_inputs, column=1, columnspan=3,
                                                              padx=2, pady=5)
 
-        if self.number_of_inputs == 10:
+        if self.number_of_inputs == 5:
             self.add_function_button.grid_remove()
 
     def remove_function(self):

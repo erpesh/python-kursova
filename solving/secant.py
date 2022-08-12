@@ -1,35 +1,21 @@
 import numpy as np
-from math import (
-    e
-)
+from sympy import lambdify
+
+from solving.utils.parse_functionss import parse_functions
 
 
-def f(variables, functions):
-    _nums = []
-    for func in functions:
-        for var in variables:
-            func = func.replace(var, f"({variables[var]})", len(func))
-        ev = eval(func)
-        _nums.append(ev)
-    return _nums
-
-
-def fill_dict(nums, dct):
-    i = 0
-    for key in dct:
-        dct[key] = str(nums[i])
-        i += 1
-    return dct
+def f(funcs, variables, num_list):
+    result_list = [lambdify(variables, func)(*num_list) for func in funcs]
+    return result_list
 
 
 def calculate(funcs, nums, variables):
-    A_matrix_dct = {variables[i]: 0 for i in range(len(funcs))}
-
-    A = np.array([[1] + f(fill_dict(nums[i], A_matrix_dct), funcs) for i in range(len(funcs) + 1)]).transpose()
+    A = np.array([[1] + f(funcs, variables, nums[i]) for i in range(len(funcs) + 1)]).transpose()
     C = np.array([1] + [0 for _ in range(len(funcs))]).transpose()
     try:
         B = np.matmul(np.linalg.inv(A), C)
-    except Exception:
+    except Exception as ex:
+        print(ex)
         return None
 
     new_x = 0
@@ -43,24 +29,15 @@ def calculate(funcs, nums, variables):
     return nums
 
 
-def handle_functions(funcs):
-    for i in range(len(funcs)):
-        func_splited = funcs[i].split('=')
-        funcs[i] = func_splited[0] + "-" + f"({func_splited[1]})"
-    return funcs
-
-
 def secant_method(funcs, nums, variables, tolerance=0.00001, max_iter=1000):
-    funcs = handle_functions(funcs)
+    funcs = parse_functions(funcs)
     iters = 0
     for i in range(max_iter):
         if nums is None:
             return "Try another numbers"
         first_cond_list = abs(np.array(nums[-1]) - np.array(nums[-2])) < tolerance
         first_condition = sum(first_cond_list) == len(nums[0])
-        second_cond_dct = {variables[i]: 0 for i in range(len(funcs))}
-        second_cond_dct = fill_dict(nums[-1], second_cond_dct)
-        second_cond_list = abs(np.array(f(second_cond_dct, funcs))) < tolerance
+        second_cond_list = abs(np.array(f(funcs, variables, num_list=nums[-1]))) < tolerance
         second_condition = sum(second_cond_list) == len(nums[0])
         if first_condition or second_condition:
             break

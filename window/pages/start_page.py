@@ -24,6 +24,6 @@ class StartPage(tk.Frame):
         checkbox2.grid(row=3, column=0, columnspan=3, padx=2, pady=5)
 
         submit_method = ttk.Button(self, text="Submit", command=lambda: controller.show_frame(
-            PageNewton if var_radio.get() == 0 else PageSecant))
+            1 if var_radio.get() == 0 else 2))
         submit_method.grid(row=4, column=0, columnspan=3, padx=2, pady=5)
 
