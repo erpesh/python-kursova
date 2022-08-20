@@ -3,8 +3,9 @@ from math import log10, ceil
 from tkinter import ttk
 import traceback
 
+from solving.graph import plot_graph
 from solving.newton import newton_method
-from window.exceptions.newton_exceptions import funcs_exc, initial_guesses_exc, variables_exc, tolerance_exc, max_iter_exc
+from window.exceptions.newton_exceptions import NewtonExceptions
 
 
 class PageNewton(tk.Frame):
@@ -121,31 +122,29 @@ class PageNewton(tk.Frame):
         self.sbmt_button.grid(row=self.number_of_inputs + 5, column=2, columnspan=2, padx=2, pady=10)
 
     def handle_submit(self):
+
+        funcs = [inp["input"].get() for inp in self.inputs]
         try:
-            funcs = [inp["input"].get() for inp in self.inputs]
-            # funcs handling
-            funcs_exc(funcs)
-            # initial guesses handling
-            nums = initial_guesses_exc(self.init_nums, funcs)
-            # variables handling
-            variables = variables_exc(self.variables_entry, funcs)
-            # tolerance handling
-            tolerance = tolerance_exc(self.toler_inpt)
-            # max iter handling
-            max_iter = max_iter_exc(self.max_iter_entry)
-            result, iters = newton_method(funcs=funcs,
-                                          nums=nums,
-                                          tolerance=tolerance,
-                                          variables=variables,
-                                          max_iter=max_iter)
+            exceptions_object = NewtonExceptions(funcs=funcs,
+                                                 variables_entry=self.variables_entry,
+                                                 tolerance_input=self.toler_inpt,
+                                                 max_iter_entry=self.max_iter_entry,
+                                                 init_nums_entry=self.init_nums)
+
+            result, iters = newton_method(funcs=funcs.copy(),
+                                          nums=exceptions_object.init_guesses,
+                                          tolerance=exceptions_object.tolerance,
+                                          variables=exceptions_object.variables,
+                                          max_iter=exceptions_object.max_iter)
+
             # initial guesses handling
             if type(result) == str:
                 answer_string = result
             else:
                 answer_list = []
                 for i in range(len(result)):
-                    result[i] = round(result[i], ceil(-log10(tolerance)))
-                    answer_list.append(f"{variables[i]}={result[i]}")
+                    result[i] = round(result[i], ceil(-log10(exceptions_object.tolerance)))
+                    answer_list.append(f"{exceptions_object.variables[i]}={result[i]}")
                 answer_string = ", ".join(answer_list) + f"\tК-сть ітерацій: {iters}"
         except AttributeError:
             answer_string = "Перевірте коректність введеної функції"
@@ -157,3 +156,6 @@ class PageNewton(tk.Frame):
             self.answer.destroy()
         self.answer = ttk.Label(self, text=answer_string)
         self.answer.grid(row=self.number_of_inputs + 6, column=0, columnspan=4, padx=2, pady=10)
+
+        if '=' in answer_string and self.number_of_inputs == 2:
+            plot_graph(funcs, self.variables_entry.get().split())

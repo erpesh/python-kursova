@@ -1,7 +1,7 @@
 import numpy as np
 from sympy import lambdify
 
-from solving.utils.parse_functionss import parse_functions
+from solving.utils.parse_functions import parse_functions
 
 
 def f(funcs, variables, num_list):
@@ -34,7 +34,7 @@ def secant_method(funcs, nums, variables, tolerance=0.00001, max_iter=1000):
     iters = 0
     for i in range(max_iter):
         if nums is None:
-            return "Try another numbers"
+            return "Щось пішло не так, спробуйте інші числа", 0
         first_cond_list = abs(np.array(nums[-1]) - np.array(nums[-2])) < tolerance
         first_condition = sum(first_cond_list) == len(nums[0])
         second_cond_list = abs(np.array(f(funcs, variables, num_list=nums[-1]))) < tolerance

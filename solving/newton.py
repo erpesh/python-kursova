@@ -3,16 +3,10 @@ from sympy import Symbol, lambdify
 import numpy as np
 
 from solving.utils.jacobian import calculate_jacobian
-from solving.utils.parse_functionss import parse_functions
+from solving.utils.parse_functions import parse_functions
 
 
 def f(funcs, num_list, variables):
-    # print(funcs)
-    # print(num_list)
-    # print(variables)
-    # print(type(funcs[0]))
-    # print(type(num_list[0]))
-    # print(type(variables[0]))
     result_list = [lambdify(variables, func)(*num_list) for func in funcs]
     return np.array(result_list)
 

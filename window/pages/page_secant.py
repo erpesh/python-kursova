@@ -1,11 +1,12 @@
+import random
 import tkinter as tk
 import traceback
-from functools import reduce
 from math import ceil, log10
 from tkinter import ttk
 
-from solving.newton import newton_method
-from window.exceptions.newton_exceptions import funcs_exc, initial_guesses_exc, variables_exc, tolerance_exc, max_iter_exc
+from solving.graph import plot_graph
+from solving.secant import secant_method
+from window.exceptions.secant_exceptions import SecantExceptions
 
 
 class PageSecant(tk.Frame):
@@ -16,6 +17,9 @@ class PageSecant(tk.Frame):
         self.number_of_inputs = 2
         self.initial_guesses = None
         self.answer = None
+
+        back_btn = ttk.Button(self, text="Повернутися", command=lambda: controller.show_frame(0))
+        back_btn.grid(row=0, column=0)
 
         label = ttk.Label(self, text="Метод січних")
         label.grid(row=0, column=0, columnspan=3, padx=2, pady=10)
@@ -30,7 +34,7 @@ class PageSecant(tk.Frame):
         self.submit_button()
 
     def update_widgets(self):
-        self.init_nums.grid(row=self.number_of_inputs + 3, column=1, padx=2, pady=10)
+        self.init_nums_btn.grid(row=self.number_of_inputs + 3, column=1, padx=2, pady=10)
         self.initial_nums_label.grid(row=self.number_of_inputs + 3, column=0, padx=2, pady=10)
         self.variables_label.grid(row=self.number_of_inputs + 3, column=2, padx=2, pady=10)
         self.variables_entry.grid(row=self.number_of_inputs + 3, column=3, padx=2, pady=10)
@@ -75,17 +79,27 @@ class PageSecant(tk.Frame):
         if self.number_of_inputs == 5:
             self.add_function_button.grid_remove()
 
+        self.initial_guesses = None
+
     def remove_function(self):
         self.number_of_inputs -= 1
         self.inputs[-1]["label"].destroy()
         self.inputs[-1]["input"].destroy()
         self.inputs = self.inputs[:-1]
         self.update_widgets()
+        self.initial_guesses = None
 
     def initial_numbers(self):
 
-        def save_initial_guesses(initial_nums):
+        def save_initial_guesses(initial_nums, win):
             self.initial_guesses = [[initial_nums[i][j].get() for j in range(len(initial_nums[i]))] for i in range(len(initial_nums))]
+            win.withdraw()
+
+        def generate_random_guesses(initial_nums):
+            for i in range(len(initial_nums)):
+                for j in range(len(initial_nums[i])):
+                    initial_nums[i][j].delete(0, tk.END)
+                    initial_nums[i][j].insert(-1, random.uniform(-10, 10))
 
         def create():
             win = tk.Toplevel(self)
@@ -95,12 +109,14 @@ class PageSecant(tk.Frame):
                     if self.initial_guesses is not None:
                         initial_nums[i][j].insert(-1, self.initial_guesses[i][j])
                     initial_nums[i][j].grid(row=j, column=i, padx=2, pady=5)
-            sbmt_btn = ttk.Button(win, text="Зберегти", command=lambda: save_initial_guesses(initial_nums))
+            sbmt_btn = ttk.Button(win, text="Зберегти", command=lambda: save_initial_guesses(initial_nums, win))
             sbmt_btn.grid(row=len(initial_nums) + 1)
+            tst_btn = ttk.Button(win, text="Згенерувати", command=lambda: generate_random_guesses(initial_nums))
+            tst_btn.grid(row=len(initial_nums) + 1, column=1)
 
-        self.init_nums = ttk.Button(self, text="Додати початкові", command=create)
+        self.init_nums_btn = ttk.Button(self, text="Додати початкові", command=create)
         self.initial_nums_label = ttk.Label(self, text="Початкові наближення: ")
-        self.init_nums.grid(row=self.number_of_inputs + 3, column=1, padx=2, pady=10)
+        self.init_nums_btn.grid(row=self.number_of_inputs + 3, column=1, padx=2, pady=10)
         self.initial_nums_label.grid(row=self.number_of_inputs + 3, column=0, padx=2, pady=10)
 
     def variable_names(self):
@@ -135,31 +151,28 @@ class PageSecant(tk.Frame):
         self.sbmt_button.grid(row=self.number_of_inputs + 5, column=2, columnspan=2, padx=2, pady=10)
 
     def handle_submit(self):
+        funcs = [inp["input"].get() for inp in self.inputs]
+
         try:
-            funcs = [inp["input"].get() for inp in self.inputs]
-            # funcs handling
-            funcs_exc(funcs)
-            # initial guesses handling
-            nums = initial_guesses_exc(self.init_nums, funcs)
-            # variables handling
-            variables = variables_exc(self.variables_entry, funcs)
-            # tolerance handling
-            tolerance = tolerance_exc(self.toler_inpt)
-            # max iter handling
-            max_iter = max_iter_exc(self.max_iter_entry)
-            result, iters = newton_method(funcs=funcs,
-                                          nums=nums,
-                                          tolerance=tolerance,
-                                          variables=variables,
-                                          max_iter=max_iter)
+            exceptions_object = SecantExceptions(funcs=funcs,
+                                                 variables_entry=self.variables_entry,
+                                                 tolerance_input=self.toler_inpt,
+                                                 max_iter_entry=self.max_iter_entry,
+                                                 init_nums_entry=self.initial_guesses)
+
+            result, iters = secant_method(funcs=funcs.copy(),
+                                          nums=exceptions_object.init_guesses,
+                                          tolerance=exceptions_object.tolerance,
+                                          variables=exceptions_object.variables,
+                                          max_iter=exceptions_object.max_iter)
             # initial guesses handling
             if type(result) == str:
                 answer_string = result
             else:
                 answer_list = []
                 for i in range(len(result)):
-                    result[i] = round(result[i], ceil(-log10(tolerance)))
-                    answer_list.append(f"{variables[i]}={result[i]}")
+                    result[i] = round(result[i], ceil(-log10(exceptions_object.tolerance)))
+                    answer_list.append(f"{exceptions_object.variables[i]}={result[i]}")
                 answer_string = ", ".join(answer_list) + f"\tК-сть ітерацій: {iters}"
         except AttributeError:
             answer_string = "Перевірте коректність введеної функції"
@@ -171,3 +184,6 @@ class PageSecant(tk.Frame):
             self.answer.destroy()
         self.answer = ttk.Label(self, text=answer_string)
         self.answer.grid(row=self.number_of_inputs + 6, column=0, columnspan=4, padx=2, pady=10)
+
+        if '=' in answer_string and self.number_of_inputs == 2:
+            plot_graph(funcs, self.variables_entry.get().split())
