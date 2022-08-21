@@ -4,8 +4,8 @@ import traceback
 from math import ceil, log10
 from tkinter import ttk
 
-from solving.graph import plot_graph
-from solving.secant import secant_method
+from solving.evaled import EvaledMethods
+from solving.secant import SecantMethod
 from window.exceptions.secant_exceptions import SecantExceptions
 from window.pages.method_page import MethodPage
 
@@ -64,7 +64,8 @@ class PageSecant(MethodPage):
     def initial_numbers(self):
 
         def save_initial_guesses(initial_nums, win):
-            self.initial_guesses = [[initial_nums[i][j].get() for j in range(len(initial_nums[i]))] for i in range(len(initial_nums))]
+            self.initial_guesses = [[initial_nums[i][j].get() for j in range(len(initial_nums[i]))] for i in
+                                    range(len(initial_nums))]
             win.withdraw()
 
         def generate_random_guesses(initial_nums):
@@ -75,7 +76,8 @@ class PageSecant(MethodPage):
 
         def create():
             win = tk.Toplevel(self)
-            initial_nums = [[ttk.Entry(win, width=7) for _ in range(self.number_of_inputs)] for _ in range(self.number_of_inputs + 1)]
+            initial_nums = [[ttk.Entry(win, width=7) for _ in range(self.number_of_inputs)] for _ in
+                            range(self.number_of_inputs + 1)]
             for i in range(len(initial_nums)):
                 for j in range(len(initial_nums[i])):
                     if self.initial_guesses is not None:
@@ -101,11 +103,14 @@ class PageSecant(MethodPage):
                                                  max_iter_entry=self.max_iter_entry,
                                                  init_nums_entry=self.initial_guesses)
 
-            result, iters = secant_method(funcs=funcs.copy(),
-                                          nums=exceptions_object.init_guesses,
-                                          tolerance=exceptions_object.tolerance,
-                                          variables=exceptions_object.variables,
-                                          max_iter=exceptions_object.max_iter)
+            solver_object = SecantMethod(funcs=funcs.copy(),
+                                         nums=exceptions_object.init_guesses,
+                                         tolerance=exceptions_object.tolerance,
+                                         variables=exceptions_object.variables,
+                                         max_iter=exceptions_object.max_iter)
+
+            result, iters = solver_object.result, solver_object.iters
+
             # initial guesses handling
             if type(result) == str:
                 answer_string = result
@@ -116,6 +121,7 @@ class PageSecant(MethodPage):
                     answer_list.append(f"{exceptions_object.variables[i]}={result[i]}")
                 answer_string = ", ".join(answer_list) + f"\tК-сть ітерацій: {iters}"
         except AttributeError:
+            print(traceback.format_exc())
             answer_string = "Перевірте коректність введеної функції"
         except Exception as ex:
             answer_string = ex
@@ -127,4 +133,4 @@ class PageSecant(MethodPage):
         self.answer.grid(row=self.number_of_inputs + 6, column=0, columnspan=4, padx=2, pady=10)
 
         if '=' in answer_string and self.number_of_inputs == 2:
-            plot_graph(funcs, self.variables_entry.get().split())
+            EvaledMethods.plot_graph(funcs, self.variables_entry.get().split())

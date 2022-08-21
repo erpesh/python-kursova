@@ -3,8 +3,8 @@ from math import log10, ceil
 from tkinter import ttk
 import traceback
 
-from solving.graph import plot_graph
-from solving.newton import newton_method
+from solving.evaled import EvaledMethods
+from solving.newton import NewtonMethod
 from window.exceptions.newton_exceptions import NewtonExceptions
 from window.pages.method_page import MethodPage
 
@@ -72,11 +72,12 @@ class PageNewton(MethodPage):
                                                  max_iter_entry=self.max_iter_entry,
                                                  init_nums_entry=self.init_nums)
 
-            result, iters = newton_method(funcs=funcs.copy(),
-                                          nums=exceptions_object.init_guesses,
-                                          tolerance=exceptions_object.tolerance,
-                                          variables=exceptions_object.variables,
-                                          max_iter=exceptions_object.max_iter)
+            solver_object = NewtonMethod(funcs=funcs.copy(),
+                                         nums=exceptions_object.init_guesses,
+                                         tolerance=exceptions_object.tolerance,
+                                         variables=exceptions_object.variables,
+                                         max_iter=exceptions_object.max_iter)
+            result, iters = solver_object.result, solver_object.iters
 
             # initial guesses handling
             if type(result) == str:
@@ -99,4 +100,4 @@ class PageNewton(MethodPage):
         self.answer.grid(row=self.number_of_inputs + 6, column=0, columnspan=4, padx=2, pady=10)
 
         if '=' in answer_string and self.number_of_inputs == 2:
-            plot_graph(funcs, self.variables_entry.get().split())
+            EvaledMethods.plot_graph(funcs, self.variables_entry.get().split())

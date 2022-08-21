@@ -1,49 +1,50 @@
 import numpy as np
-from sympy import lambdify
 
-from solving.utils.parse_functions import parse_functions
-
-
-def f(funcs, variables, num_list):
-    result_list = [lambdify(variables, func)(*num_list) for func in funcs]
-    return result_list
+from solving.solver import Solver
 
 
-def calculate(funcs, nums, variables):
-    A = np.array([[1] + f(funcs, variables, nums[i]) for i in range(len(funcs) + 1)]).transpose()
-    C = np.array([1] + [0 for _ in range(len(funcs))]).transpose()
-    try:
-        B = np.matmul(np.linalg.inv(A), C)
-    except Exception as ex:
-        print(ex)
-        return None
+class SecantMethod(Solver):
+    def __init__(self, funcs, nums, variables, tolerance, max_iter):
+        super().__init__()
 
-    new_x = 0
-    for i in range(len(funcs) + 1):
-        new_x += B[i] * np.array(nums[i])
+        self.result, self.iters = self.solve(funcs, nums, variables, tolerance, max_iter)
 
-    for i in range(len(nums) - 1):
-        nums[i] = nums[i + 1]
-    nums[-1] = new_x.tolist()
+    def calculate(self, funcs, nums, variables):
+        A = np.array([[1] + self.f(funcs, nums[i], variables).tolist() for i in range(len(funcs) + 1)]).transpose()
+        C = np.array([1] + [0 for _ in range(len(funcs))]).transpose()
+        try:
+            B = np.matmul(np.linalg.inv(A), C)
+        except Exception as ex:
+            print(ex)
+            return None
 
-    return nums
+        new_x = 0
+        for i in range(len(funcs) + 1):
+            new_x += B[i] * np.array(nums[i])
 
+        for i in range(len(nums) - 1):
+            nums[i] = nums[i + 1]
+        nums[-1] = new_x.tolist()
 
-def secant_method(funcs, nums, variables, tolerance=0.00001, max_iter=1000):
-    funcs = parse_functions(funcs)
-    iters = 0
-    for i in range(max_iter):
-        if nums is None:
-            return "Щось пішло не так, спробуйте інші числа", 0
-        first_cond_list = abs(np.array(nums[-1]) - np.array(nums[-2])) < tolerance
-        first_condition = sum(first_cond_list) == len(nums[0])
-        second_cond_list = abs(np.array(f(funcs, variables, num_list=nums[-1]))) < tolerance
-        second_condition = sum(second_cond_list) == len(nums[0])
-        if first_condition or second_condition:
-            break
+        return nums
+
+    def solve(self, funcs, nums, variables, tolerance, max_iter):
+        funcs = self.parse_functions(funcs)
+        iters = 0
+        for i in range(max_iter):
+            if nums is None:
+                return "Щось пішло не так, спробуйте інші числа", 0
+            first_cond_list = abs(np.array(nums[-1]) - np.array(nums[-2])) < tolerance
+            first_condition = sum(first_cond_list) == len(nums[0])
+            second_cond_list = abs(np.array(self.f(funcs=funcs, variables=variables, num_list=nums[-1]))) < tolerance
+            second_condition = sum(second_cond_list) == len(nums[0])
+            if first_condition or second_condition:
+                break
+            else:
+                nums = self.calculate(funcs, nums, variables)
+            iters += 1
         else:
-            nums = calculate(funcs, nums, variables)
-        iters += 1
-    else:
-        print("Maximum number of iterations is reached!")
-    return nums[-1], iters
+            print("Maximum number of iterations is reached!")
+        return nums[-1], iters
+
+
