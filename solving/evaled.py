@@ -1,17 +1,37 @@
 import traceback
-
 import matplotlib.pyplot as plt
-from sympy import Symbol, Eq, Or, log, sin, cos, tan, cot, atan, acot, asin, acos, pi
+from sympy import Symbol, Eq, Or, log, sin, cos, tan, cot, atan, acot, asin, acos, pi, plot
 from sympy.plotting import plot_implicit
 from math import e
 import numpy as np
 
+
 class EvaledMethods:
+
+    @staticmethod
+    def eval_functions(funcs, variables):
+        lets = [Symbol(variables[i], real=True) for i in range(len(funcs))]
+        for i in range(len(funcs)):
+            for k in range(len(funcs)):
+                j = 0
+                while True:
+                    if len(funcs[i]) == j:
+                        break
+                    if funcs[i][j] == variables[k]:
+                        funcs[i] = funcs[i][:j] + f"lets[{k}]" + funcs[i][j + 1:]
+                        j += len(f"lets[{k}]") - 1
+                    j += 1
+
+        evaled_functions = []
+        for i in range(len(funcs)):
+            ev = eval(funcs[i])
+            evaled_functions.append(ev)
+        return evaled_functions
 
     @staticmethod
     def plot_graph(funcs, variables):
         plt.rcParams["xtick.labelsize"] = 10
-        plt.rcParams["xtick.color"] = "red"
+        plt.title = "Графік"
 
         try:
             lets = [Symbol(x) for x in variables]

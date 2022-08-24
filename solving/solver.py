@@ -3,9 +3,6 @@ import numpy as np
 
 
 class Solver:
-    def __init__(self):
-        pass
-
     @staticmethod
     def parse_functions(funcs):
         for i in range(len(funcs)):

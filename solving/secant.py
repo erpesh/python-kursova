@@ -1,5 +1,9 @@
-import numpy as np
+import traceback
 
+import numpy as np
+from sympy import Symbol
+
+from solving.evaled import EvaledMethods
 from solving.solver import Solver
 
 
@@ -15,7 +19,7 @@ class SecantMethod(Solver):
         try:
             B = np.matmul(np.linalg.inv(A), C)
         except Exception as ex:
-            print(ex)
+            print(traceback.format_exc())
             return None
 
         new_x = 0
@@ -30,6 +34,8 @@ class SecantMethod(Solver):
 
     def solve(self, funcs, nums, variables, tolerance, max_iter):
         funcs = self.parse_functions(funcs)
+        funcs = EvaledMethods.eval_functions(funcs, variables)
+        variables = [Symbol(var, real=True) for var in variables]
         iters = 0
         for i in range(max_iter):
             if nums is None:

@@ -28,16 +28,18 @@ class Exceptions:
     def variables_exc(self):
         variables = self.variables_entry.get().split(' ')
         variables_lengths = [len(x) for x in variables]
-        used_letters = ['e', 'l', 'o', 'g', 's', 'i', 'n', 'c', 't', 'p', 'a']
+        USED_LETTERS = ['e', 'l', 'o', 'g', 's', 'i', 'n', 'c', 't', 'p', 'a']
         if not self.variables_entry.get():
-            raise Exception("Ввадіть змінні")
+            raise Exception("Введіть змінні")
         if sum(variables_lengths) != len(variables):
             raise Exception("Змінні повинні складатись з 1 латинської літери")
         if len(variables) != len(self.funcs):
             raise Exception("К-сть змінних повинна дорівнювати к-сті рівнянь")
         if not all([item.isalpha() for item in variables]):
             raise Exception("Змінні повинні бути латинськими літерами")
-        for letter in used_letters:
+        if any([variables[i] in variables[i+1:] for i in range(len(variables))]):
+            raise Exception("Назви змінних повінні бути різними")
+        for letter in USED_LETTERS:
             if letter in variables:
                 raise Exception(f'Літера "{letter}" не може бути змінною')
 

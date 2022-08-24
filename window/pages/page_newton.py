@@ -65,6 +65,7 @@ class PageNewton(MethodPage):
     def handle_submit(self):
 
         funcs = [inp["input"].get() for inp in self.inputs]
+
         try:
             exceptions_object = NewtonExceptions(funcs=funcs,
                                                  variables_entry=self.variables_entry,
