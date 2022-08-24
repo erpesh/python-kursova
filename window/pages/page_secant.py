@@ -1,12 +1,7 @@
 import random
 import tkinter as tk
-import traceback
-from math import ceil, log10
 from tkinter import ttk
 
-from solving.evaled import EvaledMethods
-from solving.secant import SecantMethod
-from window.exceptions.secant_exceptions import SecantExceptions
 from window.pages.method_page import MethodPage
 
 
@@ -15,6 +10,7 @@ class PageSecant(MethodPage):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
+        self.method = "Secant"
         self.number_of_inputs = 2
         self.initial_guesses = None
         self.answer = None
@@ -93,44 +89,3 @@ class PageSecant(MethodPage):
         self.init_nums.grid(row=self.number_of_inputs + 3, column=1, padx=2, pady=10)
         self.initial_nums_label.grid(row=self.number_of_inputs + 3, column=0, padx=2, pady=10)
 
-    def handle_submit(self):
-        funcs = [inp["input"].get() for inp in self.inputs]
-
-        try:
-            exceptions_object = SecantExceptions(funcs=funcs,
-                                                 variables_entry=self.variables_entry,
-                                                 tolerance_input=self.toler_inpt,
-                                                 max_iter_entry=self.max_iter_entry,
-                                                 init_nums_entry=self.initial_guesses)
-
-            solver_object = SecantMethod(funcs=funcs.copy(),
-                                         nums=exceptions_object.init_guesses,
-                                         tolerance=exceptions_object.tolerance,
-                                         variables=exceptions_object.variables,
-                                         max_iter=exceptions_object.max_iter)
-
-            result, iters = solver_object.result, solver_object.iters
-
-            # initial guesses handling
-            if type(result) == str:
-                answer_string = result
-            else:
-                answer_list = []
-                for i in range(len(result)):
-                    result[i] = round(result[i], ceil(-log10(exceptions_object.tolerance)))
-                    answer_list.append(f"{exceptions_object.variables[i]}={result[i]}")
-                answer_string = ", ".join(answer_list) + f"\tК-сть ітерацій: {iters}"
-        except AttributeError:
-            print(traceback.format_exc())
-            answer_string = "Перевірте коректність введеної функції"
-        except Exception as ex:
-            answer_string = ex
-            print(traceback.format_exc())
-
-        if self.answer is not None:
-            self.answer.destroy()
-        self.answer = ttk.Label(self, text=answer_string)
-        self.answer.grid(row=self.number_of_inputs + 6, column=0, columnspan=4, padx=2, pady=10)
-
-        if '=' in answer_string and self.number_of_inputs == 2:
-            EvaledMethods.plot_graph(funcs, self.variables_entry.get().split())

@@ -45,7 +45,3 @@ class TkinterApp(tk.Tk):
         frame.tkraise()
 
 
-def start_tkinter():
-    app = TkinterApp()
-    app.mainloop()
-

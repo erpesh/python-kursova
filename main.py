@@ -1,4 +1,5 @@
-from window.tkinter_app import start_tkinter
+from window.tkinter_app import TkinterApp
 
 if __name__ == '__main__':
-    start_tkinter()
+    app = TkinterApp()
+    app.mainloop()
