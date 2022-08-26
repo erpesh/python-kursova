@@ -19,8 +19,9 @@ class PageSecant(MethodPage):
         back_btn.grid(row=0, column=0)
 
         label = ttk.Label(self, text="Метод січних")
-        label.grid(row=0, column=0, columnspan=3, padx=2, pady=10)
+        label.grid(row=0, column=1, padx=2, pady=10)
 
+        self.read_button()
         self.render_inputs()
         self.initial_numbers()
         self.variable_names()

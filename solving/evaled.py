@@ -1,6 +1,9 @@
 import traceback
+import tkinter
+
+import matplotlib
 import matplotlib.pyplot as plt
-from sympy import Symbol, Eq, Or, log, sin, cos, tan, cot, atan, acot, asin, acos, pi, plot
+from sympy import Symbol, Eq, Or, log, sin, cos, tan, cot, atan, acot, asin, acos, pi
 from sympy.plotting import plot_implicit
 from math import e
 import numpy as np
@@ -32,6 +35,7 @@ class EvaledMethods:
     def plot_graph(funcs, variables):
         plt.rcParams["xtick.labelsize"] = 10
         plt.title = "Графік"
+        matplotlib.use('TkAgg')
 
         try:
             lets = [Symbol(x) for x in variables]

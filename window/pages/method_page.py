@@ -3,6 +3,8 @@ import tkinter as tk
 import traceback
 from tkinter import ttk
 
+import numpy as np
+
 from solving.evaled import EvaledMethods
 from solving.newton import NewtonMethod
 from solving.secant import SecantMethod
@@ -85,6 +87,63 @@ class MethodPage(tk.Frame):
         self.sbmt_button = ttk.Button(self, text="Вирахувати", command=self.handle_submit, width=30)
         self.sbmt_button.grid(row=self.number_of_inputs + 5, column=2, columnspan=2, padx=2, pady=10)
 
+    def read_button(self):
+        self.read_btn = ttk.Button(self, text="Зчитати", command=self.read_from_file, width=10)
+        self.read_btn.grid(row=0, column=2)
+
+    def read_from_file(self):
+        with open("save_newton.txt" if self.method == "Newton" else "save_secant.txt", 'r') as file:
+            data = file.readlines()
+            data = [item[:-1] for item in data]
+            funcs = []
+            after_funcs_id = 0
+            for i in range(len(data)):
+                if "=" in data[i]:
+                    funcs.append(data[i])
+                    after_funcs_id = i + 1
+                    continue
+                if i == after_funcs_id:
+                    if self.method == "Newton":
+                        self.init_nums.insert(0, data[i])
+                    if self.method == "Secant":
+                        nums_list = np.array(data[i].split(" "))
+                        if len(nums_list) == 6:
+                            nums_list = np.reshape(nums_list, (3, 2))
+                        if len(nums_list) == 12:
+                            nums_list = np.reshape(nums_list, (4, 3))
+                        if len(nums_list) == 20:
+                            nums_list = np.reshape(nums_list, (5, 4))
+                        if len(nums_list) == 30:
+                            nums_list = np.reshape(nums_list, (6, 5))
+                        self.initial_guesses = nums_list
+                if i == after_funcs_id + 1:
+                    self.variables_entry.insert(0, data[i])
+                if i == after_funcs_id + 2:
+                    self.toler_inpt.insert(0, data[i])
+                if i == after_funcs_id + 3:
+                    self.max_iter_entry.insert(0, data[i])
+            for i in range(len(self.inputs)):
+                self.inputs[i]["input"].insert(0, funcs[i])
+
+
+
+    def write_to_file(self):
+        funcs = [inp["input"].get() for inp in self.inputs]
+        with open("save_newton.txt" if self.method == "Newton" else "save_secant.txt", 'w') as file:
+            for func in funcs:
+                file.write(func + '\n')
+            if self.method == "Newton":
+                file.write(self.init_nums.get() + '\n')
+            if self.method == "Secant":
+                init_gues = []
+                for row in self.initial_guesses:
+                    for item in row:
+                        init_gues.append(item)
+                file.write(" ".join(init_gues) + '\n')
+            file.write(self.variables_entry.get() + '\n')
+            file.write(self.toler_inpt.get() + '\n')
+            file.write(self.max_iter_entry.get() + '\n')
+
     def handle_submit(self):
         funcs = [inp["input"].get() for inp in self.inputs]
 
@@ -134,6 +193,8 @@ class MethodPage(tk.Frame):
             self.answer.destroy()
         self.answer = ttk.Label(self, text=answer_string)
         self.answer.grid(row=self.number_of_inputs + 6, column=0, columnspan=4, padx=2, pady=10)
+
+        self.write_to_file()
 
         if '=' in answer_string and self.number_of_inputs == 2:
             EvaledMethods.plot_graph(funcs, self.variables_entry.get().split())
