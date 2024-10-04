@@ -13,8 +13,8 @@ class SecantExceptions(Exceptions):
 
     def initial_guesses_exc(self):
         if self.init_nums_entry is None:
-            raise Exception("Введіть початкові наближенння")
+            raise Exception("Enter initial guesses")
         if not all(self.isfloat(item) for row in self.init_nums_entry for item in row):
-            raise Exception("Початкові наближення повинні бути числами")
+            raise Exception("Initial guesses must be numbers")
 
         self.init_guesses = [[float(item) for item in row] for row in self.init_nums_entry]

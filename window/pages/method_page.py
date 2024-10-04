@@ -40,7 +40,7 @@ class MethodPage(tk.Frame):
 
         for i in range(self.number_of_inputs):
             dct = {
-                "label": ttk.Label(self, text=f"Рівняння {i + 1}"),
+                "label": ttk.Label(self, text=f"Equation {i + 1}"),
                 "input": ttk.Entry(self, width=60),
             }
             self.inputs.append(dct)
@@ -54,13 +54,13 @@ class MethodPage(tk.Frame):
         pass
 
     def variable_names(self):
-        self.variables_label = ttk.Label(self, text="Змінні: ")
+        self.variables_label = ttk.Label(self, text="Variables: ")
         self.variables_label.grid(row=self.number_of_inputs + 3, column=2, padx=2, pady=10)
         self.variables_entry = ttk.Entry(self, width=15)
         self.variables_entry.grid(row=self.number_of_inputs + 3, column=3, padx=2, pady=10)
 
     def tolerance_input(self):
-        self.toler_lbl = ttk.Label(self, text="Точність")
+        self.toler_lbl = ttk.Label(self, text="Precision")
         self.toler_lbl.grid(row=self.number_of_inputs + 4, column=0, padx=2, pady=10)
         self.toler_inpt = ttk.Entry(self, width=15)
         self.toler_inpt.grid(row=self.number_of_inputs + 4, column=1, padx=2, pady=10)
@@ -69,26 +69,26 @@ class MethodPage(tk.Frame):
         pass
 
     def max_iter_input(self):
-        self.max_iter_lbl = ttk.Label(self, text="Максимальна к-сть ітерацій")
+        self.max_iter_lbl = ttk.Label(self, text="Maximum number of iterations")
         self.max_iter_lbl.grid(row=self.number_of_inputs + 4, column=2, padx=2, pady=10)
         self.max_iter_entry = ttk.Entry(self, width=15)
         self.max_iter_entry.grid(row=self.number_of_inputs + 4, column=3, padx=2, pady=10)
 
     def add_button(self):
-        self.add_function_button = ttk.Button(self, text="Додати функцію", command=self.add_function)
+        self.add_function_button = ttk.Button(self, text="Add Function", command=self.add_function)
         self.add_function_button.grid(row=self.number_of_inputs + 5, column=0, padx=2, pady=10)
 
     def remove_button(self):
-        self.remove_function_button = ttk.Button(self, text="Видалити функцію", command=self.remove_function)
+        self.remove_function_button = ttk.Button(self, text="Remove Function", command=self.remove_function)
         if self.number_of_inputs > 2:
             self.remove_function_button.grid(row=self.number_of_inputs + 5, column=1, padx=2, pady=10)
 
     def submit_button(self):
-        self.sbmt_button = ttk.Button(self, text="Вирахувати", command=self.handle_submit, width=30)
+        self.sbmt_button = ttk.Button(self, text="Calculate", command=self.handle_submit, width=30)
         self.sbmt_button.grid(row=self.number_of_inputs + 5, column=2, columnspan=2, padx=2, pady=10)
 
     def read_button(self):
-        self.read_btn = ttk.Button(self, text="Зчитати", command=self.read_from_file, width=10)
+        self.read_btn = ttk.Button(self, text="Read", command=self.read_from_file, width=10)
         self.read_btn.grid(row=0, column=2)
 
     def read_from_file(self):
@@ -124,8 +124,6 @@ class MethodPage(tk.Frame):
                     self.max_iter_entry.insert(0, data[i])
             for i in range(len(self.inputs)):
                 self.inputs[i]["input"].insert(0, funcs[i])
-
-
 
     def write_to_file(self):
         funcs = [inp["input"].get() for inp in self.inputs]
@@ -184,7 +182,7 @@ class MethodPage(tk.Frame):
                 answer_string = self.build_result(result, exceptions_object, iters)
         except AttributeError:
             print(traceback.format_exc())
-            answer_string = "Перевірте коректність введеної функції"
+            answer_string = "Check if the entered function is valid"
         except Exception as ex:
             answer_string = ex
             print(traceback.format_exc())
@@ -205,5 +203,5 @@ class MethodPage(tk.Frame):
         for i in range(len(result)):
             result[i] = round(result[i], math.ceil(-math.log10(exceptions_object.tolerance)))
             answer_list.append(f"{exceptions_object.variables[i]}={result[i]}")
-        answer_string = ", ".join(answer_list) + f"\tК-сть ітерацій: {iters}"
+        answer_string = "Results: " + ", ".join(answer_list) + f"\tNumber of iterations: {iters}"
         return answer_string

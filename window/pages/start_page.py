@@ -8,7 +8,7 @@ class StartPage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         # label of frame Layout 2
-        label = ttk.Label(self, text="Виберіть метод")
+        label = ttk.Label(self, text="Choose a method to solve the system of equations")
 
         # putting the grid in its place by using grid
         label.grid(row=1, column=0, padx=2, pady=10)
@@ -17,7 +17,7 @@ class StartPage(tk.Frame):
         self.buttons()
 
     def buttons(self):
-        self.button1 = tk.Button(self, text="Метод Ньютона", command=lambda: self.controller.show_frame(1))
+        self.button1 = tk.Button(self, text="Newton's Method", command=lambda: self.controller.show_frame(1))
         self.button1.grid(row=2, column=0, columnspan=3, padx=2, pady=5)
-        self.button2 = tk.Button(self, text="Метод січних", command=lambda: self.controller.show_frame(2))
+        self.button2 = tk.Button(self, text="Secant Method", command=lambda: self.controller.show_frame(2))
         self.button2.grid(row=3, column=0, columnspan=3, padx=2, pady=5)

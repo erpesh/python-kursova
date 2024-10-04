@@ -13,13 +13,13 @@ class NewtonExceptions(Exceptions):
 
     def initial_guesses_exc(self):
         if not self.init_nums_entry.get():
-            raise Exception("Введіть початкові наближенння")
+            raise Exception("Enter initial guesses")
         string_guesses = self.init_nums_entry.get().split(' ')
         if not all([self.isfloat(item) for item in string_guesses]):
-            raise Exception("Початкові наближення повинні бути числами")
+            raise Exception("Initial guesses must be numbers")
         nums = [float(x) for x in string_guesses]
         if len(nums) != len(self.funcs):
-            raise Exception("К-сть початкових наближень має бути рівною к-сті рівнянь")
+            raise Exception("The number of initial guesses must equal the number of equations")
 
         self.init_guesses = nums
 

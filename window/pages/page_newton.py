@@ -12,10 +12,10 @@ class PageNewton(MethodPage):
         self.number_of_inputs = 2
         self.answer = None
 
-        back_btn = ttk.Button(self, text="Повернутися", command=lambda: controller.show_frame(0))
+        back_btn = ttk.Button(self, text="Back", command=lambda: controller.show_frame(0))
         back_btn.grid(row=0, column=0)
 
-        label = ttk.Label(self, text="Метод Ньютона")
+        label = ttk.Label(self, text="Newton's Method")
         label.grid(row=0, column=1, padx=2, pady=10)
 
         self.read_button()
@@ -35,7 +35,7 @@ class PageNewton(MethodPage):
         self.update_widgets()
 
         self.inputs.append({
-            "label": ttk.Label(self, text=f"Рівняння {self.number_of_inputs}"),
+            "label": ttk.Label(self, text=f"Equation {self.number_of_inputs}"),
             "input": ttk.Entry(self, width=60)
         })
         self.inputs[self.number_of_inputs - 1]["label"].grid(row=2 + self.number_of_inputs, column=0, padx=2, pady=5)
@@ -54,7 +54,6 @@ class PageNewton(MethodPage):
 
     def initial_numbers(self):
         self.init_nums = ttk.Entry(self, width=15)
-        self.initial_nums_label = ttk.Label(self, text="Початкові наближення: ")
+        self.initial_nums_label = ttk.Label(self, text="Initial Guesses: ")
         self.init_nums.grid(row=self.number_of_inputs + 3, column=1, padx=2, pady=10)
         self.initial_nums_label.grid(row=self.number_of_inputs + 3, column=0, padx=2, pady=10)
-

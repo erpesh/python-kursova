@@ -15,10 +15,10 @@ class PageSecant(MethodPage):
         self.initial_guesses = None
         self.answer = None
 
-        back_btn = ttk.Button(self, text="Повернутися", command=lambda: controller.show_frame(0))
+        back_btn = ttk.Button(self, text="Back", command=lambda: controller.show_frame(0))
         back_btn.grid(row=0, column=0)
 
-        label = ttk.Label(self, text="Метод січних")
+        label = ttk.Label(self, text="Secant Method")
         label.grid(row=0, column=1, padx=2, pady=10)
 
         self.read_button()
@@ -38,7 +38,7 @@ class PageSecant(MethodPage):
         self.update_widgets()
 
         self.inputs.append({
-            "label": ttk.Label(self, text=f"Рівняння {self.number_of_inputs}"),
+            "label": ttk.Label(self, text=f"Equation {self.number_of_inputs}"),
             "input": ttk.Entry(self, width=60)
         })
         self.inputs[self.number_of_inputs - 1]["label"].grid(row=2 + self.number_of_inputs, column=0, padx=2, pady=5)
@@ -80,13 +80,12 @@ class PageSecant(MethodPage):
                     if self.initial_guesses is not None:
                         initial_nums[i][j].insert(-1, self.initial_guesses[i][j])
                     initial_nums[i][j].grid(row=j, column=i, padx=2, pady=5)
-            sbmt_btn = ttk.Button(win, text="Зберегти", command=lambda: save_initial_guesses(initial_nums, win))
+            sbmt_btn = ttk.Button(win, text="Save", command=lambda: save_initial_guesses(initial_nums, win))
             sbmt_btn.grid(row=len(initial_nums) + 1)
-            tst_btn = ttk.Button(win, text="Згенерувати", command=lambda: generate_random_guesses(initial_nums))
+            tst_btn = ttk.Button(win, text="Generate", command=lambda: generate_random_guesses(initial_nums))
             tst_btn.grid(row=len(initial_nums) + 1, column=1)
 
-        self.init_nums = ttk.Button(self, text="Додати початкові", command=create)
-        self.initial_nums_label = ttk.Label(self, text="Початкові наближення: ")
+        self.init_nums = ttk.Button(self, text="Add Guesses", command=create)
+        self.initial_nums_label = ttk.Label(self, text="Initial Guesses: ")
         self.init_nums.grid(row=self.number_of_inputs + 3, column=1, padx=2, pady=10)
         self.initial_nums_label.grid(row=self.number_of_inputs + 3, column=0, padx=2, pady=10)
-

@@ -39,7 +39,7 @@ class SecantMethod(Solver):
         iters = 0
         for i in range(max_iter):
             if nums is None:
-                return "Щось пішло не так, спробуйте інші числа", 0
+                return "Something went wrong, try different numbers", 0
             first_cond_list = abs(np.array(nums[-1]) - np.array(nums[-2])) < tolerance
             first_condition = sum(first_cond_list) == len(nums[0])
             second_cond_list = abs(np.array(self.f(funcs=funcs, variables=variables, num_list=nums[-1]))) < tolerance

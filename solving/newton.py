@@ -34,7 +34,7 @@ class NewtonMethod(Solver):
         for i in range(max_iter):
             iters += 1
             if new_x is None or True in [np.isnan(np.min(number)) for number in new_x]:
-                return "Щось пішло не так, спробуйте інші числа", 0
+                return "Something went wrong, try different numbers", 0
             count = 0
             for q in range(len(new_x)):
                 first_condition = abs(new_x[q] - nums[q]) < tolerance
@@ -46,8 +46,8 @@ class NewtonMethod(Solver):
             nums = new_x
             new_x = self.calculate_new_x(funcs, jacobian, nums, variables=variables)
         else:
-            print("Максимальна к-сть ітерацій досягнута!")
-            return "Максимальна к-сть ітерацій досягнута!", max_iter
+            print("Maximum number of iterations is reached!")
+            return "Maximum number of iterations is reached!", max_iter
         return new_x.tolist(), iters
 
 
